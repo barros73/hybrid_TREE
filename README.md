@@ -1,83 +1,58 @@
-# hybrid_TREE
-An AI-driven Project Orchestrator that uses a tree-based hierarchical manifest to synchronize architecture, dependencies, and codebase across decoupled environments.
+# 🌌 Antigravity IDE
+**Structural AI Orchestration for VS Code**
 
-Questa è un'ottima idea. Trasformare una checklist passiva in una struttura a "Albero di Stato" (ispirata al comando tree di Linux) permette all'AI di mappare istantaneamente la topologia del progetto e capire dove si trova.
+> *Transforming flat checklists into a living, multi-dimensional State Tree.*
 
-Ecco una proposta di struttura per il file PROJECT_MAP.md (o CHECKLIST_TREE.md). Questo formato è studiato per essere leggibile sia da te che da Jules, agendo da "ponte" tra i due progetti.
-
-Struttura del file: MASTER_PROJECT_TREE.md
-Markdown
-# 🗺️ Master Project Tree: [Nome Progetto]
-
-**Stato Legenda:**
-- `[ ]` : Vuoto (Da iniziare)
-- `[/]` : In Progress (AI al lavoro o bloccato)
-- `[X]` : Finito (Codice validato e testato)
-- `[!]` : Errore/Conflitto (Es. Ownership di Rust violata)
+**Antigravity IDE** is a VS Code extension designed to bridge the gap between Human Intent and AI Execution. It replaces passive Markdown checklists with an interactive, object-oriented **Tree of State** that maps your project's architecture, dependencies, and implementation status in real-time.
 
 ---
 
-## 🏗️ Architettura a Blocchi (Logical Tree)
-root (Core)
-├── [X] Config_Manager (Core_Sottoblocco)
-│   └── [X] .env_parser
-├── [/] Network_Engine (Sottoparte)
-│   ├── [X] Socket_Listener
-│   ├── [/] Protocol_Handler [! Conflitto Ownership su Core_State]
-│   └── [ ] Encryption_Layer
-└── [ ] UI_Renderer (Sottoparte)
-    ├── [ ] Terminal_View
-    └── [ ] Web_Dashboard
+## 🚀 The Concept
+
+Large-scale AI development often suffers from "Context Drift." As a project grows, simple to-do lists fail to capture the complexity of file relationships, ownership rules (especially in Rust), and architectural hierarchy.
+
+**Antigravity IDE** solves this by treating your project plan not as text, but as a **Dynamic Node Tree**.
+It allows you to expand or collapse complexity at will, keeping the AI focused on the leaf it is currently implementing while maintaining awareness of the forest.
 
 ---
 
-## 📂 Struttura File & Sincronizzazione (Physical Tree)
-target_project/
-├── [X] Cargo.toml (Sync: OK)
-├── src/
-│   ├── [X] main.rs
-│   ├── [X] lib.rs (Core)
-│   └── network/
-│       ├── [X] mod.rs
-│       ├── [/] handler.rs (AI sta scrivendo...)
-│       └── [ ] crypto.rs
-└── docs/
-    └── [X] architettura_core.md
+## ✨ Key Features
+
+### 1. 🌲 The Dynamic State Tree
+Navigate your project through a hierarchical sidebar. Each node represents a feature, a file, or a logic block.
+- **Collapsible Focus**: Fold completed branches to reduce noise. Expand active branches to drill down into specifics.
+- **Visual Status Tracking**: Instantly see the health of your project.
+
+### 2. 🚦 The 4-State Logic Engine
+Every node in the tree tracks its lifecycle through four distinct states:
+- `[ ]` **Void**: Planned but untouched.
+- `[/]` **In Progress**: Currently under AI construction.
+- `[X]` **Solidified**: Implemented, verified, and locked.
+- `[!]` **Entropy**: Conflict detected (e.g., compilation error, broken dependency, Rust ownership violation).
+
+### 3. 🧠 Deep Context Nodes
+Unlike a simple checkbox, every Node is a rich object containing two distinct data layers:
+- **Human Layer (Specs)**: What *you* want (e.g., "Create a thread-safe connection pool").
+- **AI Layer (Implementation)**: What the *AI* did (e.g., "Used `Arc<Mutex>` with `tokio::sync`").
+
+### 4. 🔄 Bi-Directional Synchronization
+Antigravity supports two powerful workflows:
+- **Design-First (The Architect)**: Import a `PLAN.md`. The extension parses it into a Logic Tree. You define the specs, the AI fills the code.
+- **Code-First (The Archaeologist)**: Point Antigravity at an existing codebase. It scans the file system and AST to reconstruct the Logic Tree, mapping what already exists.
 
 ---
 
-## 📝 Checklist Dettagliata per Capitoli (Action Tree)
+## 🛠️ Implementation & Stack
 
-### Capitolo 1: Fondamenta Core
-- [X] Definizione della struct `State` nel Core.
-- [X] Implementazione del trait `Default` per il Core.
-- [ ] Setup del logger globale.
-
-### Capitolo 2: Integrazione Sottoparti
-- [/] Collegamento Network_Engine -> Core (tramite Arc<Mutex>).
-- [!] Risoluzione bug: il `Protocol_Handler` non può accedere al Core se il `Socket_Listener` è attivo.
-- [ ] Test di integrazione tra i primi due blocchi.
+Built for **VS Code** using **TypeScript**, Antigravity IDE is language-agnostic but features specialized "Gravity Compensators" for **Rust**:
+- **Crate Mapping**: Automatically aligns tree nodes with `Cargo.toml` workspace members.
+- **Ownership Visualization**: Highlights potential borrow-checker conflicts before code is written.
 
 ---
 
-## 🤖 AI Context Instructions
-1. **Priorità:** Jules, lavora sempre sul primo nodo `[/]` partendo dall'alto.
-2. **Aggiornamento:** Ogni volta che completi una funzione nel progetto Target, cambia lo stato da `[/]` a `[X]` in questo file.
-3. **Blocco:** Se trovi un errore di compilazione che non riesci a risolvere, segna il nodo con `[!]` e ferma l'esecuzione.
-Perché questa struttura funziona per l'AI?
-Visione Multolivello: L'AI vede contemporaneamente la logica (chi dipende da chi), i file (dove deve scrivere) e i task (cosa deve fare).
+## 🔮 Roadmap
 
-Il comando "Tree" come Indice: Usare la simbologia del comando tree (├──, └──) permette all'AI di usare algoritmi di ricerca su alberi per navigare il tuo progetto. È molto più efficiente di una lista piatta.
-
-Il "Punto di Conflitto": Quando segni [!], Jules capisce immediatamente che il problema non è solo nel codice, ma nell'architettura del "Blocco".
-
-Multialbero: Puoi avere un albero per la logica Rust, uno per la documentazione e uno per i test, tutti nello stesso file.
-
-Come usarlo con Jules su due progetti:
-Dovresti dire a Jules nel progetto Manager:
-
-"Jules, usa il file MASTER_PROJECT_TREE.md come bussola. Prima di ogni azione, leggi lo stato dell'albero. Se vedi un nodo [/], vai nella cartella del progetto Target e continua lo sviluppo lì. Non passare al nodo successivo finché non hai segnato [X] su quello attuale."
-
-Ti sembra che questa visualizzazione "Tree" rispecchi la complessità che avevi in mente? Se vuoi, possiamo aggiungere una sezione specifica per la gestione delle dipendenze del Cargo.toml dentro l'albero.
-
-2. Descrizione Tecnica per GitHub (README)Questa versione spiega il perché del progetto e la logica dei blocchi.Project Name: [Nome, es. ArchFlow o TreeManager]Subtitle: Structural AI Orchestration for Complex SystemsDescription:"This project is a decoupled Project Manager Sidecar designed to solve context-drift in AI-assisted development. By implementing a Multi-Tree State Machine (Logic Tree, Physical Tree, and Dependency Tree), it provides a source of truth that guides the AI through complex architectures.While optimized for Rust’s Ownership and Module system (managing lib.rs and Cargo.toml coordination), the core engine is language-agnostic, allowing the same hierarchical checklist logic to be applied to Python, C, or any modular codebase."3. Descrizione delle Funzionalità (Feature List)Utile per spiegare i "punti di forza" (Key Selling Points):Decoupled Architecture: Operates as a standalone "Brain" project that observes and commands a separate "Worker" codebase.Tree-State Synchronization: Uses a Linux-style tree hierarchy to track task status: [ ] Empty, [/] In-Progress, [X] Completed, and [!] Conflict.Rust Ownership Guard: Automatically detects and visualizes data-access conflicts between the Core and Sub-blocks before compilation.Automated Cargo/Dependency Alignment: Direct mapping between the architectural manifest and the Cargo.toml file to prevent dependency hell.Glossario Tecnico UtilizzatoSe devi parlarne a voce o scrivere a Jules in inglese, ecco i termini chiave che abbiamo usato:ItalianoInglese TecnicoSenza legami / SeparatoDecoupled / StandaloneAlbero delle dipendenzeDependency TreePonte / CollegamentoBridge / OrchestratorIndipendente dal linguaggioLanguage-AgnosticConflitto di possesso (Rust)Ownership ConflictManifesto dello statoState ManifestUn consiglio per GitHubSe pubblichi il file MASTER_PROJECT_TREE.md, aggiungi un piccolo commento in cima:# This file is an AI-readable architectural manifest. Do not edit manually without syncing the Project Manager.
+1.  **Phase 1**: Markdown Parser & Tree Visualization (Read-Only).
+2.  **Phase 2**: State Management & Node Editing (Read/Write).
+3.  **Phase 3**: Code-Scanning Engine (Reverse Sync).
+4.  **Phase 4**: Direct AI Agent Integration (The "Gardener").
