@@ -1,75 +1,75 @@
 # 🗺️ Master Project Tree: hybrid_TREE
 
-**Stato Legenda:**
-- `[ ]` : Vuoto (Da iniziare)
-- `[/]` : In Progress (AI al lavoro o bloccato)
-- `[X]` : Finito (Codice validato e testato)
-- `[!]` : Errore/Conflitto (Es. Ownership di Rust violata)
+**Status Legend:**
+- `[ ]` : Empty (To start)
+- `[/]` : In Progress (AI working or blocked)
+- `[X]` : Finished (Code validated and tested)
+- `[!]` : Error/Conflict (e.g., Rust Ownership violation)
 
 ---
 
-## 🏗️ Architettura a Blocchi (Logical Tree)
+## 🏗️ Logical Block Architecture (Logical Tree)
 root (Hybrid Tree Orchestrator)
 ├── [X] Project_Initialization (Core)
-│   └── [X] manifest_generator: Genera il file MASTER_PROJECT_TREE.md iniziale.
+│   └── [X] manifest_generator: Generates the initial MASTER_PROJECT_TREE.md file.
 ├── [X] VSCode_Integration (Interface)
-│   ├── [X] command_registration: Registra i comandi VS Code nel package.json.
-│   ├── [X] tree_view_provider: Implementa il parsing e la visualizzazione del manifest.
-│   └── [X] state_sync_engine: Sincronizza lo stato tra manifest e UI in tempo reale.
+│   ├── [X] command_registration: Registers VS Code commands in package.json.
+│   ├── [X] tree_view_provider: Implements manifest parsing and visualization.
+│   └── [X] state_sync_engine: Synchronizes state between manifest and UI in real-time.
 ├── [X] AI_Context_Bridge (Logic)
-│   ├── [X] context_aggregator: Aggrega manifest e struttura fisica per i prompt AI.
-│   ├── [X] reasoning_loop: Identifica il prossimo task e gestisce le priorità.
-│   └── [X] manifest_validator: Rileva duplicati e violazioni di integrità nel manifest.
+│   ├── [X] context_aggregator: Aggregates manifest and physical structure for AI prompts.
+│   ├── [X] reasoning_loop: Identifies the next task and manages priorities.
+│   └── [X] manifest_validator: Detects duplicates and integrity violations in the manifest.
 └── [ ] Multi_Language_Support (Roadmap)
-    ├── [ ] Rust_Ownership_Guard: Visualizzazione del borrow checker e ownership.
-    ├── [ ] CPP_Header_Mapper: Mapping .hpp/.cpp e audit memoria.
-    └── [ ] Python_Import_Graph: Analisi import e suggerimenti type hinting.
+    ├── [ ] Rust_Ownership_Guard: Visualization of borrow checker and ownership.
+    ├── [ ] CPP_Header_Mapper: .hpp/.cpp mapping and memory audit.
+    └── [ ] Python_Import_Graph: Import analysis and type hinting suggestions.
 
 ---
 
-## 📂 Struttura File & Sincronizzazione (Physical Tree)
+## 📂 File Structure & Synchronization (Physical Tree)
 hybrid_TREE/
 ├── [X] package.json (Sync: OK)
 ├── [X] tsconfig.json (Sync: OK)
 ├── [X] src/
-│   ├── [X] extension.ts: Entry point dell'estensione e registrazione servizi.
+│   ├── [X] extension.ts: Extension entry point and service registration.
 │   ├── [X] bridge/
-│   │   ├── [X] ContextManager.ts: Gestore degli snapshot di contesto per l'AI.
-│   │   ├── [X] ReasoningLoop.ts: Motore di suggerimento task e logica decisionale.
-│   │   └── [X] ManifestValidator.ts: Validazione "ironclad" contro i duplicati.
+│   │   ├── [X] ContextManager.ts: Context snapshot manager for AI.
+│   │   ├── [X] ReasoningLoop.ts: Task suggestion engine and decision logic.
+│   │   └── [X] ManifestValidator.ts: Ironclad validation against duplicates.
 │   └── [X] provider/
-│       └── [X] TreeProvider.ts: Fornisce i dati per la Project Tree View.
-├── [X] README.md: Documentazione tecnica e manuale utente.
-├── [X] LICENSE: Testo della licenza GNU General Public License v3.
-└── [X] MASTER_PROJECT_TREE.md: Manifesto dello stato e dell'architettura.
+│       └── [X] TreeProvider.ts: Provides data for the Project Tree View.
+├── [X] README.md: Technical documentation and user manual.
+├── [X] LICENSE: GNU General Public License v3 text.
+└── [X] MASTER_PROJECT_TREE.md: State and architecture manifesto.
 
 ---
 
-## 📝 Checklist Dettagliata per Capitoli (Action Tree)
+## 📝 Detailed Checklist by Chapters (Action Tree)
 
-### Capitolo 1: Fondamenta
-- [X] Setup del repository e README iniziale.
-- [X] Reclutamento della struttura base (src/extension.ts).
-- [X] Creazione del MASTER_PROJECT_TREE.md.
+### Chapter 1: Foundations
+- [X] Repository setup and initial README.
+- [X] Base structure recruitment (src/extension.ts).
+- [X] Creation of MASTER_PROJECT_TREE.md.
 
-### Capitolo 2: Interfaccia VS Code
-- [X] Implementazione del TreeView per visualizzare lo stato.
-- [X] Sincronizzazione in tempo reale tramite FileSystemWatcher.
-- [X] Layout dei comandi (Toggle, Refresh, Init).
+### Chapter 2: VS Code Interface
+- [X] TreeView implementation to visualize status.
+- [X] Real-time synchronization via FileSystemWatcher.
+- [X] Command layout (Toggle, Refresh, Init).
 
-### Capitolo 3: AI Bridge & Integrità
-- [X] Sviluppo del Context Aggregator (Snapshot).
-- [X] Sviluppo del Reasoning Loop (Task Suggestions).
-- [X] Sviluppo del Manifest Validator (Duplicate Detection).
+### Chapter 3: AI Bridge & Integrity
+- [X] Context Aggregator development (Snapshot).
+- [X] Reasoning Loop development (Task Suggestions).
+- [X] Manifest Validator development (Duplicate Detection).
 
-### Capitolo 4: Interfaccia di Integrazione
-- [X] Export programmatico in JSON (hybrid_state_sync.json).
-- [X] Supporto avanzato per le descrizioni delle foglie (Leafs).
-- [X] Prioritizzazione automatica dei conflitti [!].
+### Chapter 4: Integration Interface
+- [X] Programmatic JSON Export (hybrid_state_sync.json).
+- [X] Advanced support for leaf descriptions.
+- [X] Automatic conflict prioritization [!].
 
 ---
 
 ## 🤖 AI Context Instructions
-1. **Priorità:** Jules, lavora sempre sul primo nodo `[/]` partendo dall'alto.
-2. **Aggiornamento:** Ogni volta che completi una funzione nel progetto Target, cambia lo stato da `[/]` a `[X]` in questo file.
-3. **Blocco:** Se trovi un errore di compilazione che non riesci a risolvere, segna il nodo con `[!]` e ferma l'esecuzione.
+1. **Priority:** Jules, always work on the first `[/]` node starting from the top.
+2. **Update:** Whenever you complete a function in the Target project, change the state from `[/]` to `[X]` in this file.
+3. **Block:** If you find a compilation error you cannot resolve, mark the node with `[!]` and stop execution.
