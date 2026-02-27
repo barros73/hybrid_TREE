@@ -1,0 +1,93 @@
+{
+  "name": "hybrid-tree",
+  "displayName": "Hybrid Tree",
+  "description": "An AI-driven Project Orchestrator Plugin for VS Code and Antigravity IDE",
+  "version": "0.0.1",
+  "engines": {
+    "vscode": "^1.80.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "license": "GPL-3.0-only",
+  "activationEvents": [
+    "onView:hybridTree",
+    "onCommand:hybridTree.init"
+  ],
+  "main": "./out/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "hybridTree.init",
+        "title": "Hybrid Tree: Initialize"
+      },
+      {
+        "command": "hybridTree.toggleState",
+        "title": "Toggle State",
+        "icon": "$(sync)"
+      },
+      {
+        "command": "hybridTree.copyContext",
+        "title": "Hybrid Tree: Copy AI Context",
+        "icon": "$(clippy)"
+      },
+      {
+        "command": "hybridTree.suggestNextStep",
+        "title": "Hybrid Tree: Suggest Next Step",
+        "icon": "$(lightbulb)"
+      },
+      {
+        "command": "hybridTree.exportJson",
+        "title": "Hybrid Tree: Export JSON State",
+        "icon": "$(export)"
+      }
+    ],
+    "menus": {
+      "view/item/context": [
+        {
+          "command": "hybridTree.toggleState",
+          "when": "view == hybridTree",
+          "group": "inline"
+        }
+      ]
+    },
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "hybrid-tree-explorer",
+          "title": "Hybrid Tree",
+          "icon": "$(list-tree)"
+        }
+      ]
+    },
+    "views": {
+      "hybrid-tree-explorer": [
+        {
+          "id": "hybridTree",
+          "name": "Project Tree"
+        }
+      ]
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "pretest": "npm run compile && npm run lint",
+    "lint": "eslint src --ext ts",
+    "test": "node ./out/test/runTest.js"
+  },
+  "devDependencies": {
+    "@types/glob": "^8.1.0",
+    "@types/mocha": "^10.0.1",
+    "@types/node": "20.2.5",
+    "@types/vscode": "^1.80.0",
+    "@typescript-eslint/eslint-plugin": "^5.59.8",
+    "@typescript-eslint/parser": "^5.59.8",
+    "@vscode/test-electron": "^2.3.2",
+    "eslint": "^8.41.0",
+    "glob": "^8.1.0",
+    "mocha": "^10.2.0",
+    "typescript": "^5.9.3"
+  }
+}
