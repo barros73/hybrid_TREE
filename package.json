@@ -17,7 +17,7 @@
   "categories": [
     "Other"
   ],
-  "license": "GPL-3.0-only",
+  "license": "Apache-2.0",
   "activationEvents": [],
   "main": "./dist/extension.js",
   "contributes": {
@@ -76,10 +76,11 @@
     }
   },
   "scripts": {
-    "vscode:prepublish": "npm run compile",
+    "vscode:prepublish": "npm run build",
     "compile": "tsc -p ./",
+    "build": "tsc -p ./",
     "watch": "tsc -watch -p ./",
-    "pretest": "npm run compile && npm run lint",
+    "pretest": "npm run build && npm run lint",
     "lint": "eslint src --ext ts",
     "test": "node ./out/test/runTest.js"
   },

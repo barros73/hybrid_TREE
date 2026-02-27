@@ -96,29 +96,42 @@ While optimized for Rust’s Ownership and Module system, the core engine is lan
 | Conflitto di possesso (Rust) | Ownership Conflict |
 | Manifesto dello stato | State Manifest |
 
-## Usage
+## 🏁 Getting Started
 
-The `hybrid` ecosystem works in three stages to bridge documentation and code.
+### Prerequisites
+- **Node.js**: Version 16.x or higher.
+- **npm**: Standard Node package manager.
 
-### 1. Snapshot Code Structure
-Run this inside your project directory to extract the physical architecture into a high-fidelity JSON map.
+### 🚀 Quick Installation
 ```bash
-node /path/to/hybrid-RCP/dist/cli.js export-structure .
-```
-
-### 2. Consolidate Manifest (Automatic Tree)
-This command automatically parses all Markdown files in `docs/feature_trees/` and creates a consolidated `hybrid-tree.json`. It also detects "orphan" code files not yet documented.
-```bash
-node /path/to/hybrid-TREE/dist/cli.js consolidate
-```
-
-### 3. Connect Requirements to Code
-Bridge the logical tree and the physical code structure to generate a deterministic traceability matrix.
-```bash
-node /path/to/hybrid-MATRIX/dist/cli.js connect -w .
+curl -sSL https://raw.githubusercontent.com/barros73/hybrid-BIM/main/install.sh | bash
 ```
 
 ---
 
+## CLI Reference
+
+### Usage
+```bash
+node /path/to/hybrid-TREE/dist/cli.js <command>
+```
+
+### Commands
+| Command | Description |
+| :--- | :--- |
+| `consolidate` | Merges fragmented feature trees from `docs/feature_trees/` into a master manifest. Generates `hybrid-tree.json` and performs **Orphan Detection** (checks for code without documentation). |
+| `snapshot` | Displays an interactive summary of the current project state (Logical vs. Physical metrics). |
+| `export` | Exports the current logical state to `.hybrid/hybrid-tree.json`. |
+
+---
+
+## Ecosystem Integration
+TREE provides the "Logical Layer" (Intent) for the Hybrid ecosystem:
+1. **Define Intent**: Write requirements in Markdown files.
+2. **Consolidate**: Run `hybrid-tree consolidate`.
+3. **Bridge**: Use `hybrid-MATRIX` to connect these requirements to nodes detected by `hybrid-RCP`.
+
+---
+
 ## License
-This project is licensed under the Apache License, Version 2.0 - see the [LICENSE](LICENSE) file for details.
+This project is licensed under the Apache License, Version 2.0.
