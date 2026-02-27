@@ -3,4 +3,3 @@ out/
 .vscode-test/
 *.vsix
 hybrid_state_sync.json
-package-lock.json

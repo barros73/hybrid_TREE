@@ -12,7 +12,11 @@
   "license": "GPL-3.0-only",
   "activationEvents": [
     "onView:hybridTree",
-    "onCommand:hybridTree.init"
+    "onCommand:hybridTree.init",
+    "onCommand:hybridTree.toggleState",
+    "onCommand:hybridTree.copyContext",
+    "onCommand:hybridTree.suggestNextStep",
+    "onCommand:hybridTree.exportJson"
   ],
   "main": "./out/extension.js",
   "contributes": {
