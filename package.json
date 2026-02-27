@@ -6,18 +6,16 @@
   "engines": {
     "vscode": "^1.80.0"
   },
+  "publisher": "barros73",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/barros73/hybrid-TREE"
+  },
   "categories": [
     "Other"
   ],
   "license": "GPL-3.0-only",
-  "activationEvents": [
-    "onView:hybridTree",
-    "onCommand:hybridTree.init",
-    "onCommand:hybridTree.toggleState",
-    "onCommand:hybridTree.copyContext",
-    "onCommand:hybridTree.suggestNextStep",
-    "onCommand:hybridTree.exportJson"
-  ],
+  "activationEvents": [],
   "main": "./out/extension.js",
   "contributes": {
     "commands": [
@@ -68,7 +66,8 @@
       "hybrid-tree-explorer": [
         {
           "id": "hybridTree",
-          "name": "Project Tree"
+          "name": "Project Tree",
+          "icon": "$(list-tree)"
         }
       ]
     }
@@ -92,6 +91,6 @@
     "eslint": "^8.41.0",
     "glob": "^8.1.0",
     "mocha": "^10.2.0",
-    "typescript": "^5.9.3"
+    "typescript": "^5.1.3"
   }
 }
