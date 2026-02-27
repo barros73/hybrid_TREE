@@ -1,3 +1,20 @@
+/*
+ * Hybrid-TREE - The Semantic Project Cartographer
+ * Copyright 2026 Fabrizio Baroni
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 import * as vscode from 'vscode';
 import * as fs from 'fs';
 import * as path from 'path';
@@ -50,40 +67,50 @@ ${projectStructure}
     private parseManifestToJson(content: string): any[] {
         const lines = content.split('\n');
         const root: any[] = [];
-        const stack: { item: any, indent: number }[] = [];
+        const stack: { item: any, depth: number }[] = [];
 
         lines.forEach(line => {
-            const match = line.match(/^([│\s├└─]+)\s*(\[[\s/X!]\])\s*(.*)$/);
-            if (match) {
-                const indent = match[1].length;
-                let fullText = match[3];
+            // Match standard Markdown bullets with status boxes: "- [ ] Title" or "- **[Title](...)**"
+            // Or just a regular bullet "- Title"
+            const match = line.match(/^(\s*)(?:-\s*(?:\[([\s/X!])\])?\s*)?(.*?)$/);
 
-                let label = fullText;
-                let description = "";
-                if (fullText.includes(':')) {
-                    const parts = fullText.split(':');
-                    label = parts[0].trim();
-                    description = parts.slice(1).join(':').trim();
-                }
+            // Skip empty titles or decorative lines
+            if (!match || !match[3].trim() || match[3].startsWith('---') || match[3].startsWith('#')) return;
 
-                const item = {
-                    status: match[2],
-                    label: label,
-                    description: description,
-                    children: []
-                };
+            const indent = match[1].length;
+            const status = match[2] || " ";
+            const fullText = match[3].replace(/^\*\*\[(.*?)\]\(.*?\)\*\*/, '$1').replace(/^\*\*(.*?)\*\*/, '$1').trim();
 
-                while (stack.length > 0 && stack[stack.length - 1].indent >= indent) {
-                    stack.pop();
-                }
+            if (!fullText) return;
 
-                if (stack.length === 0) {
-                    root.push(item);
-                } else {
-                    stack[stack.length - 1].item.children.push(item);
-                }
-                stack.push({ item, indent });
+            let label = fullText;
+            let description = "";
+            if (fullText.includes(':')) {
+                const parts = fullText.split(':');
+                label = parts[0].trim();
+                description = parts.slice(1).join(':').trim();
             }
+
+            const item = {
+                status: `[${status}]`,
+                label: label,
+                description: description,
+                children: []
+            };
+
+            // Heuristic for depth: use indent level divided by 2 or 4
+            const depth = indent;
+
+            while (stack.length > 0 && stack[stack.length - 1].depth >= depth) {
+                stack.pop();
+            }
+
+            if (stack.length === 0) {
+                root.push(item);
+            } else {
+                stack[stack.length - 1].item.children.push(item);
+            }
+            stack.push({ item, depth });
         });
         return root;
     }

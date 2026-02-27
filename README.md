@@ -1,37 +1,39 @@
 # hybrid_TREE
 An AI-driven Project Orchestrator that uses a tree-based hierarchical manifest to synchronize architecture, dependencies, and codebase across decoupled environments.
 
-Questa è un'ottima idea. Trasformare una checklist passiva in una struttura a "Albero di Stato" (ispirata al comando tree di Linux) permette all'AI di mappare istantaneamente la topologia del progetto e capire dove si trova.
+## The Concept
+Transforming a passive checklist into a "State Tree" structure (inspired by the Linux `tree` command) allows the AI to instantly map the project topology and understand its current location and context.
 
-Ecco una proposta di struttura per il file PROJECT_MAP.md (o CHECKLIST_TREE.md). Questo formato è studiato per essere leggibile sia da te che da Jules, agendo da "ponte" tra i due progetti.
+The `MASTER_PROJECT_TREE.md` file acts as the "State Manifest," serving as a bridge between the developer's intent and the AI's execution.
 
-Struttura del file: MASTER_PROJECT_TREE.md
-Markdown
-# 🗺️ Master Project Tree: [Nome Progetto]
+## Manifest Structure: MASTER_PROJECT_TREE.md
 
-**Stato Legenda:**
-- `[ ]` : Vuoto (Da iniziare)
-- `[/]` : In Progress (AI al lavoro o bloccato)
-- `[X]` : Finito (Codice validato e testato)
-- `[!]` : Errore/Conflitto (Es. Ownership di Rust violata)
+### Status Legend:
+- `[ ]` : Empty (To start)
+- `[/]` : In Progress (AI working or blocked)
+- `[X]` : Finished (Code validated and tested)
+- `[!]` : Error/Conflict (e.g., Rust Ownership violation)
 
 ---
 
-## 🏗️ Architettura a Blocchi (Logical Tree)
+### 🏗️ Logical Block Architecture (Logical Tree)
+```text
 root (Core)
-├── [X] Config_Manager (Core_Sottoblocco)
+├── [X] Config_Manager (Core_Subblock)
 │   └── [X] .env_parser
-├── [/] Network_Engine (Sottoparte)
+├── [/] Network_Engine (Subpart)
 │   ├── [X] Socket_Listener
-│   ├── [/] Protocol_Handler [! Conflitto Ownership su Core_State]
+│   ├── [/] Protocol_Handler [! Ownership Conflict on Core_State]
 │   └── [ ] Encryption_Layer
-└── [ ] UI_Renderer (Sottoparte)
+└── [ ] UI_Renderer (Subpart)
     ├── [ ] Terminal_View
     └── [ ] Web_Dashboard
+```
 
 ---
 
-## 📂 Struttura File & Sincronizzazione (Physical Tree)
+### 📂 File Structure & Synchronization (Physical Tree)
+```text
 target_project/
 ├── [X] Cargo.toml (Sync: OK)
 ├── src/
@@ -39,47 +41,84 @@ target_project/
 │   ├── [X] lib.rs (Core)
 │   └── network/
 │       ├── [X] mod.rs
-│       ├── [/] handler.rs (AI sta scrivendo...)
+│       ├── [/] handler.rs (AI is writing...)
 │       └── [ ] crypto.rs
 └── docs/
-    └── [X] architettura_core.md
+    └── [X] core_architecture.md
+```
 
 ---
 
-## 📝 Checklist Dettagliata per Capitoli (Action Tree)
+### 📝 Detailed Checklist by Chapters (Action Tree)
 
-### Capitolo 1: Fondamenta Core
-- [X] Definizione della struct `State` nel Core.
-- [X] Implementazione del trait `Default` per il Core.
-- [ ] Setup del logger globale.
+#### Chapter 1: Core Foundations
+- [X] Definition of the `State` struct in Core.
+- [X] Implementation of the `Default` trait for Core.
+- [ ] Global logger setup.
 
-### Capitolo 2: Integrazione Sottoparti
-- [/] Collegamento Network_Engine -> Core (tramite Arc<Mutex>).
-- [!] Risoluzione bug: il `Protocol_Handler` non può accedere al Core se il `Socket_Listener` è attivo.
-- [ ] Test di integrazione tra i primi due blocchi.
+#### Chapter 2: Subpart Integration
+- [/] Connection Network_Engine -> Core (via Arc<Mutex>).
+- [!] Bug Resolution: `Protocol_Handler` cannot access Core if `Socket_Listener` is active.
+- [ ] Integration test between the first two blocks.
 
 ---
 
 ## 🤖 AI Context Instructions
-1. **Priorità:** Jules, lavora sempre sul primo nodo `[/]` partendo dall'alto.
-2. **Aggiornamento:** Ogni volta che completi una funzione nel progetto Target, cambia lo stato da `[/]` a `[X]` in questo file.
-3. **Blocco:** Se trovi un errore di compilazione che non riesci a risolvere, segna il nodo con `[!]` e ferma l'esecuzione.
-Perché questa struttura funziona per l'AI?
-Visione Multolivello: L'AI vede contemporaneamente la logica (chi dipende da chi), i file (dove deve scrivere) e i task (cosa deve fare).
+1. **Priority:** Jules (or your AI agent), always work on the first `[/]` node starting from the top.
+2. **Update:** Whenever you complete a function in the Target project, change the state from `[/]` to `[X]` in this file.
+3. **Block:** If you find a compilation error you cannot resolve, mark the node with `[!]` and stop execution.
 
-Il comando "Tree" come Indice: Usare la simbologia del comando tree (├──, └──) permette all'AI di usare algoritmi di ricerca su alberi per navigare il tuo progetto. È molto più efficiente di una lista piatta.
+## Why this structure works for AI?
+1. **Multi-level Vision:** The AI simultaneously sees the logic (dependencies), the files (where to write), and the tasks (what to do).
+2. **"Tree" command as Index:** Using tree symbology (`├──`, `└──`) allows the AI to use tree-search algorithms to navigate the project efficiently.
+3. **Point of Conflict:** Marking `[!]` helps the AI immediately understand that the problem is architectural, not just a syntax error.
+4. **Multi-Tree:** You can have trees for logic, documentation, and tests all in the same file.
 
-Il "Punto di Conflitto": Quando segni [!], Jules capisce immediatamente che il problema non è solo nel codice, ma nell'architettura del "Blocco".
+## Technical Description
+**Structural AI Orchestration for Complex Systems.**
+This project is a decoupled Project Manager Sidecar designed to solve context-drift in AI-assisted development. By implementing a Multi-Tree State Machine (Logic Tree, Physical Tree, and Dependency Tree), it provides a source of truth that guides the AI through complex architectures.
 
-Multialbero: Puoi avere un albero per la logica Rust, uno per la documentazione e uno per i test, tutti nello stesso file.
+While optimized for Rust’s Ownership and Module system, the core engine is language-agnostic, allowing the same hierarchical checklist logic to be applied to Python, C, or any modular codebase.
 
-Come usarlo con Jules su due progetti:
-Dovresti dire a Jules nel progetto Manager:
+## Features
+- **Decoupled Architecture**: Operates as a standalone "Brain" project that observes and commands a separate "Worker" codebase.
+- **Tree-State Synchronization**: Tracks task status: `[ ]` Empty, `[/]` In-Progress, `[X]` Completed, and `[!]` Conflict.
+- **Rust Ownership Guard**: Helps visualize data-access conflicts between Core and Sub-blocks.
+- **Automated Dependency Alignment**: Direct mapping between the manifest and project configuration files.
 
-"Jules, usa il file MASTER_PROJECT_TREE.md come bussola. Prima di ogni azione, leggi lo stato dell'albero. Se vedi un nodo [/], vai nella cartella del progetto Target e continua lo sviluppo lì. Non passare al nodo successivo finché non hai segnato [X] su quello attuale."
+## Technical Glossary
+| Term | English |
+| :--- | :--- |
+| Senza legami / Separato | Decoupled / Standalone |
+| Albero delle dipendenze | Dependency Tree |
+| Ponte / Orchestratore | Bridge / Orchestrator |
+| Indipendente dal linguaggio | Language-Agnostic |
+| Conflitto di possesso (Rust) | Ownership Conflict |
+| Manifesto dello stato | State Manifest |
 
-Ti sembra che questa visualizzazione "Tree" rispecchi la complessità che avevi in mente? Se vuoi, possiamo aggiungere una sezione specifica per la gestione delle dipendenze del Cargo.toml dentro l'albero.
+## Usage
 
-2. Descrizione Tecnica per GitHub (README)Questa versione spiega il perché del progetto e la logica dei blocchi.Project Name: [Nome, es. ArchFlow o TreeManager]Subtitle: Structural AI Orchestration for Complex SystemsDescription:"This project is a decoupled Project Manager Sidecar designed to solve context-drift in AI-assisted development. By implementing a Multi-Tree State Machine (Logic Tree, Physical Tree, and Dependency Tree), it provides a source of truth that guides the AI through complex architectures.While optimized for Rust’s Ownership and Module system (managing lib.rs and Cargo.toml coordination), the core engine is language-agnostic, allowing the same hierarchical checklist logic to be applied to Python, C, or any modular codebase."3. Descrizione delle Funzionalità (Feature List)Utile per spiegare i "punti di forza" (Key Selling Points):Decoupled Architecture: Operates as a standalone "Brain" project that observes and commands a separate "Worker" codebase.Tree-State Synchronization: Uses a Linux-style tree hierarchy to track task status: [ ] Empty, [/] In-Progress, [X] Completed, and [!] Conflict.Rust Ownership Guard: Automatically detects and visualizes data-access conflicts between the Core and Sub-blocks before compilation.Automated Cargo/Dependency Alignment: Direct mapping between the architectural manifest and the Cargo.toml file to prevent dependency hell.Glossario Tecnico UtilizzatoSe devi parlarne a voce o scrivere a Jules in inglese, ecco i termini chiave che abbiamo usato:ItalianoInglese TecnicoSenza legami / SeparatoDecoupled / StandaloneAlbero delle dipendenzeDependency TreePonte / CollegamentoBridge / OrchestratorIndipendente dal linguaggioLanguage-AgnosticConflitto di possesso (Rust)Ownership ConflictManifesto dello statoState ManifestUn consiglio per GitHubSe pubblichi il file MASTER_PROJECT_TREE.md, aggiungi un piccolo commento in cima:# This file is an AI-readable architectural manifest. Do not edit manually without syncing the Project Manager.
+The `hybrid` ecosystem works in three stages to bridge documentation and code.
+
+### 1. Snapshot Code Structure
+Run this inside your project directory to extract the physical architecture into a high-fidelity JSON map.
+```bash
+node /path/to/hybrid-RCP/dist/cli.js export-structure .
+```
+
+### 2. Consolidate Manifest (Automatic Tree)
+This command automatically parses all Markdown files in `docs/feature_trees/` and creates a consolidated `hybrid-tree.json`. It also detects "orphan" code files not yet documented.
+```bash
+node /path/to/hybrid-TREE/dist/cli.js consolidate
+```
+
+### 3. Connect Requirements to Code
+Bridge the logical tree and the physical code structure to generate a deterministic traceability matrix.
+```bash
+node /path/to/hybrid-MATRIX/dist/cli.js connect -w .
+```
+
+---
+
 ## License
-This project is licensed under the GNU General Public License v3.0 - see the [LICENSE](LICENSE) file for details.
+This project is licensed under the Apache License, Version 2.0 - see the [LICENSE](LICENSE) file for details.

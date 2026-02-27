@@ -1,3 +1,20 @@
+/*
+ * Hybrid-TREE - The Semantic Project Cartographer
+ * Copyright 2026 Fabrizio Baroni
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 import * as vscode from 'vscode';
 import * as path from 'path';
 import * as fs from 'fs';
@@ -47,8 +64,11 @@ export function activate(context: vscode.ExtensionContext) {
 
     let disposableExport = vscode.commands.registerCommand('hybridTree.exportJson', async () => {
         if (!workspaceRoot) return;
+        const hybridDir = path.join(workspaceRoot, '.hybrid');
+        if (!fs.existsSync(hybridDir)) fs.mkdirSync(hybridDir);
+
         const jsonContext = contextManager.getJsonContext();
-        const exportPath = path.join(workspaceRoot, 'hybrid_state_sync.json');
+        const exportPath = path.join(hybridDir, 'hybrid_state_sync.json');
         fs.writeFileSync(exportPath, JSON.stringify(jsonContext, null, 2));
         vscode.window.showInformationMessage(`Hybrid Tree: Project state exported to hybrid_state_sync.json`);
     });

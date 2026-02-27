@@ -3,6 +3,9 @@
   "displayName": "Hybrid Tree",
   "description": "An AI-driven Project Orchestrator Plugin for VS Code and Antigravity IDE",
   "version": "0.0.1",
+  "bin": {
+    "hybrid-tree": "./dist/cli.js"
+  },
   "engines": {
     "vscode": "^1.80.0"
   },
@@ -16,7 +19,7 @@
   ],
   "license": "GPL-3.0-only",
   "activationEvents": [],
-  "main": "./out/extension.js",
+  "main": "./dist/extension.js",
   "contributes": {
     "commands": [
       {
