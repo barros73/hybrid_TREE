@@ -73,7 +73,7 @@ ${projectStructure}
     private parseManifestToJson(content: string): any[] {
         const lines = content.split('\n');
         const flatNodes: any[] = [];
-        const stack: { item: any, depth: number }[] = [];
+        const stack: { item: any, depth: number, childCount: number }[] = [];
 
         let currentHeaderDepth = 0;
 
@@ -115,8 +115,8 @@ ${projectStructure}
             const headerMatch = line.match(/^(#{2,})\s+(.*)$/);
             if (headerMatch) {
                 const level = headerMatch[1].length;
-                indent = (level - 2) * 4;
-                currentHeaderDepth = indent;
+                indent = (level - 2) * 1000; // Large multiplier to separate headers from lists if needed, but depth logic is key
+                currentHeaderDepth = (level - 2) * 4;
                 fullText = headerMatch[2];
                 status = " ";
             } else {
@@ -146,13 +146,24 @@ ${projectStructure}
                 description = parts[1] ? parts[1].trim() : "";
             }
 
+            // Re-evaluate indent logic for strict hierarchy
+            while (stack.length > 0 && stack[stack.length - 1].depth >= indent) {
+                stack.pop();
+            }
+
+            const parent = stack.length > 0 ? stack[stack.length - 1] : null;
+            if (parent) parent.childCount++;
+
+            const currentIdx = parent ? `${parent.item.index}.${parent.childCount}` : `${flatNodes.filter(n => !n.parentId).length + 1}`;
+
             const semanticId = label.toLowerCase()
                 .replace(/[^a-z0-9]+/g, '_')
                 .replace(/^_|_$/g, '');
 
             const item: any = {
                 id: semanticId,
-                parentId: null,
+                index: currentIdx,
+                parentId: parent ? parent.item.index : null,
                 status: `[${status}]`,
                 label: label,
                 description: description
@@ -162,16 +173,8 @@ ${projectStructure}
                 item.ownership = ownership;
             }
 
-            while (stack.length > 0 && stack[stack.length - 1].depth >= indent) {
-                stack.pop();
-            }
-
-            if (stack.length > 0) {
-                item.parentId = stack[stack.length - 1].item.id;
-            }
-
             flatNodes.push(item);
-            stack.push({ item, depth: indent });
+            stack.push({ item, depth: indent, childCount: 0 });
         });
 
         return flatNodes;
