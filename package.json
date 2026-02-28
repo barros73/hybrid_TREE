@@ -2,7 +2,7 @@
   "name": "hybrid-tree",
   "displayName": "Hybrid Tree",
   "description": "An AI-driven Project Orchestrator Plugin for VS Code and Antigravity IDE",
-  "version": "0.5.0",
+  "version": "0.6.0",
   "bin": {
     "hybrid-tree": "./dist/cli.js"
   },
