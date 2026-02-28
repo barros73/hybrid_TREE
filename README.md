@@ -190,10 +190,11 @@ Execution of `consolidate`, `export`, and `snapshot` appends a timestamped recor
 ---
 
 ## Ecosystem Integration
-TREE provides the "Logical Layer" (Intent) for the Hybrid ecosystem:
-1. **Define Intent**: Write requirements in Markdown files.
-2. **Consolidate**: Run `hybrid-tree consolidate`.
-3. **Bridge**: Use `hybrid-MATRIX` to connect these requirements to nodes detected by `hybrid-RCP`.
+TREE provides the "Logical Layer" (Logic) for the Hybrid ecosystem:
+1. **Define Intent**: Use `hybrid-GENESIS export` to generate the initial map.
+2. **Consolidate**: Run `hybrid-tree consolidate` to create the checklist.
+3. **Analyze Reality**: Run `hybrid-rcp export-structure .` to map the code.
+4. **Bridge**: Use `hybrid-MATRIX bridge` to generate the Next Best Action.
 
 ---
 
