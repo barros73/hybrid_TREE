@@ -109,19 +109,83 @@ curl -sSL https://raw.githubusercontent.com/barros73/hybrid-BIM/main/install.sh 
 
 ---
 
-## CLI Reference
+## 🛠️ CLI Reference & Operational Manual
+
+This module exposes a command-line interface directly usable from the project root.
+
+### Global Options
+All commands support the hidden `--ai-format` flag. When appended, it suppresses human-readable console outputs (emojis, formatting) to return strictly parseable JSON payloads. This is essential for Machine-To-Machine orchestration and CI/CD pipelines.
 
 ### Usage
 ```bash
-node /path/to/hybrid-TREE/dist/cli.js <command>
+node dist/cli.js <command> [options]
 ```
 
-### Commands
-| Command | Description |
-| :--- | :--- |
-| `consolidate` | Merges fragmented feature trees from `docs/feature_trees/` into a master manifest. Generates `hybrid-tree.json` and performs **Orphan Detection** (checks for code without documentation). |
-| `snapshot` | Displays an interactive summary of the current project state (Logical vs. Physical metrics). |
-| `export` | Exports the current logical state to `.hybrid/hybrid-tree.json`. |
+### 1. `consolidate` (Core Build Command)
+**Merges and compiles fragmented feature trees into a master manifest.**
+
+This is the most critical operation in Layer 1. It gathers all human-written intent and translates it into a rigid, machine-readable semantic state.
+
+*   **Behavior:**
+    *   Scans the `docs/feature_trees/` directory for all Markdown files (excluding `00_index.md`).
+    *   Injects file-markers and merges their contents with the `MASTER_PROJECT_TREE.md`.
+    *   Flattens complex hierarchical lists into a computable JSON object.
+    *   Performs **Orphan Code Detection**: If `hybrid-rcp.json` (Layer 3) exists in the `.hybrid/` folder, it cross-references documented requirements against actual scanned code to discover legacy or undocumented structural blocks.
+
+*   **Artifacts Generated:**
+    *   📁 `.hybrid/FULL_BIM_MANIFEST.md` (Human/AI Comprehensive Read)
+    *   📁 `.hybrid/hybrid-tree.json` (Machine State Representation)
+
+*   **Example Usage:**
+    ```bash
+    node dist/cli.js consolidate
+    ```
+
+### 2. `export`
+**Passively exports the current logical state to JSON.**
+
+*   **Behavior:**
+    *   Reads the current state manifest context without triggering merging or orphan detection.
+    *   Updates the `.hybrid/hybrid-tree.json` payload directly.
+    *   Useful for fast state re-evaluations without the heavy lifting of the consolidate compilation.
+
+*   **Example Usage:**
+    ```bash
+    node dist/cli.js export --ai-format
+    ```
+
+### 3. `snapshot`
+**Displays an interactive summary of the current project state.**
+
+*   **Behavior:**
+    *   Reads both the logical boundaries (from Tree parsing) and the physical system boundaries (if RCP data is available).
+    *   Outputs a terminal-friendly view of logical/physical metrics (e.g., Number of Requirements vs Number of Code Nodes).
+
+*   **Example Usage:**
+    ```bash
+    node dist/cli.js snapshot
+    ```
+
+---
+
+## 📜 Global Ecosystem Logging (Audit Trail)
+
+To ensure zero loss of context, especially when dealing with AI prompt orchestrators that iterate multiple times a day, `hybrid-TREE` features persistent action logging.
+
+Execution of `consolidate`, `export`, and `snapshot` appends a timestamped record detailing exactly what was processed, the paths of generated artifacts, and critically, the count of **Orphans detected**.
+
+**Log Location:**
+**`📁 .hybrid/tree-report.log`**
+
+**Example Log Entry:**
+```text
+[2026-02-28T14:41:00.000Z] COMMAND: consolidate
+--- HYBRID TREE CONSOLIDATION REPORT ---
+✅ Consolidated manifest: /project/.hybrid/FULL_BIM_MANIFEST.md
+✅ Exported JSON: /project/.hybrid/hybrid-tree.json
+⚠️  Found 7 potential undocumented code modules (Orphans).
+----------------------------------------
+```
 
 ---
 
@@ -133,5 +197,4 @@ TREE provides the "Logical Layer" (Intent) for the Hybrid ecosystem:
 
 ---
 
-## License
-This project is licensed under the Apache License, Version 2.0.
+*Copyright 2026 Fabrizio Baroni. Licensed under the Apache License, Version 2.0.*

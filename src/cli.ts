@@ -24,6 +24,14 @@ const args = process.argv.slice(2);
 const command = args[0];
 const workspaceRoot = process.cwd();
 
+function appendLog(cmd: string, message: string): void {
+    const hybridDir = path.join(workspaceRoot, '.hybrid');
+    if (!fs.existsSync(hybridDir)) fs.mkdirSync(hybridDir, { recursive: true });
+    const logPath = path.join(hybridDir, 'tree-report.log');
+    const timestampedOutput = `[${new Date().toISOString()}] COMMAND: ${cmd}\n${message.trim()}\n\n`;
+    fs.appendFileSync(logPath, timestampedOutput);
+}
+
 /**
  * CLI entry point for hybrid-TREE.
  * Handles manifest export, snapshots, and high-resolution manifest consolidation.
@@ -36,12 +44,14 @@ async function run() {
         case 'export': {
             console.log('Hybrid Tree: Exporting JSON State...');
             const hybridDir = path.join(workspaceRoot, '.hybrid');
-            if (!fs.existsSync(hybridDir)) fs.mkdirSync(hybridDir);
+            if (!fs.existsSync(hybridDir)) fs.mkdirSync(hybridDir, { recursive: true });
 
             const jsonContext = contextManager.getJsonContext();
             const exportPath = path.join(hybridDir, 'hybrid-tree.json');
             fs.writeFileSync(exportPath, JSON.stringify(jsonContext, null, 2));
-            console.log(`Exported state to ${exportPath}`);
+            const msg = `Exported state to ${exportPath}`;
+            console.log(msg);
+            appendLog('export', msg);
             break;
         }
 
@@ -49,6 +59,7 @@ async function run() {
         case 'snapshot': {
             const snapshot = await contextManager.getContextSnapshot();
             console.log(snapshot);
+            appendLog('snapshot', snapshot);
             break;
         }
 
@@ -109,7 +120,9 @@ async function run() {
             }
 
             if (aiFormat) {
-                console.log(JSON.stringify(reportData));
+                const out = JSON.stringify(reportData);
+                console.log(out);
+                appendLog('consolidate', out);
             } else {
                 let reportOutput = `--- HYBRID TREE CONSOLIDATION REPORT ---\n`;
                 reportOutput += `✅ Consolidated manifest: ${reportData.manifest}\n`;
@@ -121,11 +134,7 @@ async function run() {
                 }
                 reportOutput += `----------------------------------------\n`;
                 console.log(reportOutput);
-
-                const logPath = path.join(workspaceRoot, '.hybrid', 'tree-report.log');
-                const timestampedOutput = `[${new Date().toISOString()}]\n${reportOutput.trim()}\n\n`;
-                fs.appendFileSync(logPath, timestampedOutput);
-                console.log(`Report appended at: ${logPath}`);
+                appendLog('consolidate', reportOutput);
             }
             break;
 
