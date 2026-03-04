@@ -19,6 +19,9 @@ import * as vscode from 'vscode';
 import * as fs from 'fs';
 import * as path from 'path';
 
+// Directories to exclude from scanning — language-agnostic
+const EXCLUDED_DIRS = ['.git', 'node_modules', 'target', 'dist', 'build', 'out', '.hybrid', '.gemini', 'obj', 'bin', 'debug', 'release'];
+
 export class ContextManager {
     constructor(private workspaceRoot: string | undefined) { }
 
@@ -27,9 +30,16 @@ export class ContextManager {
             return "No workspace opened.";
         }
 
-        // User reads MASTER_PROJECT_TREE.md from the root.
-        const manifestPath = path.join(this.workspaceRoot, 'MASTER_PROJECT_TREE.md');
-        let manifestContent = "MASTER_PROJECT_TREE.md not found in workspace root.";
+        // User reads MASTER_PROJECT_TREE.md from the root, fallback to GENESIS export
+        let manifestPath = path.join(this.workspaceRoot, '.hybrid', 'MASTER_PROJECT_TREE.md');
+        if (!fs.existsSync(manifestPath)) {
+            manifestPath = path.join(this.workspaceRoot, 'MASTER_PROJECT_TREE.md');
+            if (!fs.existsSync(manifestPath)) {
+                manifestPath = path.join(this.workspaceRoot, 'GENESIS_EXPORT_TREE.md');
+            }
+        }
+
+        let manifestContent = "No manifest found (.hybrid/MASTER_PROJECT_TREE.md).";
         if (fs.existsSync(manifestPath)) {
             manifestContent = fs.readFileSync(manifestPath, 'utf-8');
         }
@@ -40,7 +50,7 @@ export class ContextManager {
 # Hybrid Tree: AI Context Snapshot
 Generated: ${new Date().toISOString()}
 
-## 🗺️ Logical Manifest (MASTER_PROJECT_TREE.md)
+## 🗺️ Logical Manifest
 \`\`\`markdown
 ${manifestContent}
 \`\`\`
@@ -55,12 +65,22 @@ ${projectStructure}
     public getJsonContext(): any {
         if (!this.workspaceRoot) return { error: "No workspace" };
 
-        // Let's also support reading from GENESIS_EXPORT_TREE.md
-        let manifestPath = path.join(this.workspaceRoot, 'MASTER_PROJECT_TREE.md');
+        let manifestPath = path.join(this.workspaceRoot, '.hybrid', 'MASTER_PROJECT_TREE.md');
         if (!fs.existsSync(manifestPath)) {
-            manifestPath = path.join(this.workspaceRoot, 'GENESIS_EXPORT_TREE.md');
+            manifestPath = path.join(this.workspaceRoot, 'MASTER_PROJECT_TREE.md');
+            if (!fs.existsSync(manifestPath)) {
+                manifestPath = path.join(this.workspaceRoot, 'GENESIS_EXPORT_TREE.md');
+            }
         }
-        if (!fs.existsSync(manifestPath)) return { error: "No manifest found in root directory" };
+
+        if (!fs.existsSync(manifestPath)) {
+            return {
+                project: "Hybrid Tree",
+                timestamp: new Date().toISOString(),
+                manifest: [],
+                warning: "No manifest found in .hybrid directory"
+            };
+        }
 
         const content = fs.readFileSync(manifestPath, 'utf-8');
         return {
@@ -180,8 +200,8 @@ ${projectStructure}
         return flatNodes;
     }
 
+    // Simple recursive simplified tree view
     private async getPhysicalStructure(root: string): Promise<string> {
-        // Simple recursive simplified tree view
         const lines: string[] = [];
         this.walk(root, "", lines);
         return lines.join('\n');
@@ -190,17 +210,21 @@ ${projectStructure}
     private walk(dir: string, prefix: string, lines: string[]): void {
         const files = fs.readdirSync(dir);
         files.forEach((file, index) => {
-            if (file === 'node_modules' || file === '.git' || file === 'out') return;
+            if (EXCLUDED_DIRS.includes(file)) return;
 
             const filePath = path.join(dir, file);
             const isLast = index === files.length - 1;
             const marker = isLast ? "└── " : "├── ";
-            const stats = fs.statSync(filePath);
 
-            lines.push(`${prefix}${marker}${file}`);
+            try {
+                const stats = fs.statSync(filePath);
+                lines.push(`${prefix}${marker}${file}`);
 
-            if (stats.isDirectory()) {
-                this.walk(filePath, prefix + (isLast ? "    " : "│   "), lines);
+                if (stats.isDirectory() && lines.length < 5000) { // Safety cap
+                    this.walk(filePath, prefix + (isLast ? "    " : "│   "), lines);
+                }
+            } catch (e) {
+                // Skip files we can't access
             }
         });
     }

@@ -1,4 +1,4 @@
-# hybrid_TREE
+# hybrid_TREE: v0.6.1 - 2026-03-04
 An AI-driven Project Orchestrator that uses a tree-based hierarchical manifest to synchronize architecture, dependencies, and codebase across decoupled environments.
 
 ## The Concept
@@ -126,11 +126,11 @@ node dist/cli.js <command> [options]
 
 This is the most critical operation in Layer 1. It gathers all human-written intent and translates it into a rigid, machine-readable semantic state.
 
-*   **Behavior:**
-    *   Scans the `docs/feature_trees/` directory for all Markdown files (excluding `00_index.md`).
-    *   Injects file-markers and merges their contents with the `MASTER_PROJECT_TREE.md`.
-    *   Flattens complex hierarchical lists into a computable JSON object.
-    *   Performs **Orphan Code Detection**: If `hybrid-rcp.json` (Layer 3) exists in the `.hybrid/` folder, it cross-references documented requirements against actual scanned code to discover legacy or undocumented structural blocks.
+*   **Behavior (Topographic Gap Analysis):**
+    -   Scans the `docs/feature_trees/` directory to build the **Intent Layer**.
+    -   Injects file-markers and merges their contents with the `MASTER_PROJECT_TREE.md`.
+    -   Performs **Real-World Gap Analysis**: If `hybrid-rcp.json` (Layer 3) is available, it cross-references documented requirements against scanned code.
+    -   **Orphan Detection**: Identifies "Zombie Code" (files in RCP not in TREE) and "Vaporware" (Requirements in TREE not in RCP).
 
 *   **Artifacts Generated:**
     *   📁 `.hybrid/FULL_BIM_MANIFEST.md` (Human/AI Comprehensive Read)

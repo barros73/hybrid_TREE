@@ -16,13 +16,20 @@
  * limitations under the License.
  */
 
+import { Command } from 'commander';
 import * as path from 'path';
 import * as fs from 'fs';
 import { ContextManager } from './bridge/ContextManager';
+import { TreeConsolidator } from './core/TreeConsolidator';
 
-const args = process.argv.slice(2);
-const command = args[0];
+const program = new Command();
 const workspaceRoot = process.cwd();
+const contextManager = new ContextManager(workspaceRoot);
+
+program
+    .name('hybrid-tree')
+    .description('Layer 1 of the Hybrid Ecosystem: Project Cartographer')
+    .version('0.6.1');
 
 function appendLog(cmd: string, message: string): void {
     const hybridDir = path.join(workspaceRoot, '.hybrid');
@@ -32,116 +39,105 @@ function appendLog(cmd: string, message: string): void {
     fs.appendFileSync(logPath, timestampedOutput);
 }
 
-/**
- * CLI entry point for hybrid-TREE.
- * Handles manifest export, snapshots, and high-resolution manifest consolidation.
- */
-async function run() {
-    const contextManager = new ContextManager(workspaceRoot);
+program
+    .command('export')
+    .description('Export the logical manifest to JSON')
+    .option('--ai-format', 'Output in machine-readable JSON format')
+    .action((options) => {
+        const aiFormat = options.aiFormat;
+        if (!aiFormat) console.log('Hybrid Tree: Exporting JSON State...');
+        const hybridDir = path.join(workspaceRoot, '.hybrid');
+        if (!fs.existsSync(hybridDir)) fs.mkdirSync(hybridDir, { recursive: true });
 
-    switch (command) {
-        // Export the logical manifest to JSON
-        case 'export': {
-            console.log('Hybrid Tree: Exporting JSON State...');
-            const hybridDir = path.join(workspaceRoot, '.hybrid');
-            if (!fs.existsSync(hybridDir)) fs.mkdirSync(hybridDir, { recursive: true });
+        const jsonContext = contextManager.getJsonContext();
+        const exportPath = path.join(hybridDir, 'hybrid-tree.json');
+        fs.writeFileSync(exportPath, JSON.stringify(jsonContext, null, 2));
 
-            const jsonContext = contextManager.getJsonContext();
-            const exportPath = path.join(hybridDir, 'hybrid-tree.json');
-            fs.writeFileSync(exportPath, JSON.stringify(jsonContext, null, 2));
+        if (aiFormat) {
+            console.log(JSON.stringify({ status: 'success', path: exportPath }));
+        } else {
             const msg = `Exported state to ${exportPath}`;
             console.log(msg);
             appendLog('export', msg);
-            break;
+        }
+    });
+
+program
+    .command('snapshot')
+    .description('Display a formatted snapshot of context')
+    .action(async () => {
+        const snapshot = await contextManager.getContextSnapshot();
+        console.log(snapshot);
+        appendLog('snapshot', snapshot);
+    });
+
+program
+    .command('consolidate')
+    .description('Consolidate fragmented requirement files')
+    .option('--ai-format', 'Output in machine-readable JSON format')
+    .action(async (options) => {
+        const aiFormat = options.aiFormat;
+        if (!aiFormat) console.log('Hybrid Tree: Consolidating Feature Trees...');
+
+        let manifestPath = path.join(workspaceRoot, '.hybrid', 'MASTER_PROJECT_TREE.md');
+        if (!fs.existsSync(manifestPath)) {
+            manifestPath = path.join(workspaceRoot, 'MASTER_PROJECT_TREE.md');
+        }
+        if (!fs.existsSync(manifestPath)) {
+            manifestPath = path.join(workspaceRoot, 'GENESIS_EXPORT_TREE.md');
         }
 
-        // Display a formatted snapshot of the current logical and physical context
-        case 'snapshot': {
-            const snapshot = await contextManager.getContextSnapshot();
-            console.log(snapshot);
-            appendLog('snapshot', snapshot);
-            break;
+        if (!fs.existsSync(manifestPath)) {
+            if (aiFormat) console.log(JSON.stringify({ error: 'No manifest found in .hybrid/ or root' }));
+            else console.error('Error: No manifest found.');
+            process.exit(1);
         }
 
-        // Consolidate fragmented requirement files from docs/feature_trees/ into a single manifest
-        case 'consolidate':
-            const aiFormat = args.includes('--ai-format');
-            if (!aiFormat) console.log('Hybrid Tree: Consolidating Feature Trees...');
-            const manifestPath = path.join(workspaceRoot, 'MASTER_PROJECT_TREE.md');
-            if (!fs.existsSync(manifestPath)) {
-                if (aiFormat) console.log(JSON.stringify({ error: 'MASTER_PROJECT_TREE.md not found' }));
-                else console.error('Error: MASTER_PROJECT_TREE.md not found.');
-                process.exit(1);
-            }
+        let initialManifest = fs.readFileSync(manifestPath, 'utf-8');
+        let fullManifest = initialManifest;
+        const consolidator = new TreeConsolidator(workspaceRoot);
+        fullManifest = await consolidator.consolidate(initialManifest);
 
-            let fullManifest = fs.readFileSync(manifestPath, 'utf-8');
-            const treeDir = path.join(workspaceRoot, 'docs', 'feature_trees');
+        const consolidatedPath = path.join(workspaceRoot, '.hybrid', 'MASTER_PROJECT_TREE.md');
+        const hybridDir2 = path.join(workspaceRoot, '.hybrid');
+        if (!fs.existsSync(hybridDir2)) fs.mkdirSync(hybridDir2, { recursive: true });
 
-            // Look for additional markdown feature trees to merge
-            if (fs.existsSync(treeDir)) {
-                const treeFiles = fs.readdirSync(treeDir).filter(f => f.endsWith('.md') && f !== '00_index.md');
-                if (!aiFormat) console.log(`Merging ${treeFiles.length} feature trees...`);
-                for (const file of treeFiles) {
-                    if (!aiFormat) process.stdout.write(`  + ${file}\n`);
-                    const content = fs.readFileSync(path.join(treeDir, file), 'utf-8');
-                    // Add markers for each source file
-                    fullManifest += `\n\n--- FILE: ${file} ---\n\n` + content;
-                }
-            }
+        fs.writeFileSync(consolidatedPath, fullManifest);
+        const jsonContext = contextManager.getJsonContext();
+        const treePath = path.join(workspaceRoot, '.hybrid', 'hybrid-tree.json');
+        fs.writeFileSync(treePath, JSON.stringify(jsonContext, null, 2));
 
-            const consolidatedPath = path.join(workspaceRoot, '.hybrid', 'FULL_BIM_MANIFEST.md');
-            const hybridDir2 = path.join(workspaceRoot, '.hybrid');
-            if (!fs.existsSync(hybridDir2)) fs.mkdirSync(hybridDir2);
+        let reportData: any = { status: 'success', manifest: consolidatedPath, state: treePath };
 
-            // Save the flattened manifest for high-resolution analysis
-            fs.writeFileSync(consolidatedPath, fullManifest);
-            if (!aiFormat) console.log(`✅ Consolidated manifest saved to ${consolidatedPath}`);
-
-            const jsonContext = contextManager.getJsonContext();
-            const treePath = path.join(workspaceRoot, '.hybrid', 'hybrid-tree.json');
-            fs.writeFileSync(treePath, JSON.stringify(jsonContext, null, 2));
-            if (!aiFormat) console.log(`✅ Exported state to ${treePath}`);
-
-            // Summary and Persistance
-            let reportData: any = { status: 'success', manifest: consolidatedPath, state: treePath };
-
-            // Check for RCP orphans (Code without documentation)
-            const rcpPath = path.join(workspaceRoot, '.hybrid', 'hybrid-rcp.json');
-            if (fs.existsSync(rcpPath)) {
-                if (!aiFormat) console.log('🔍 Checking for undocumented code constructs...');
+        const rcpPath = path.join(workspaceRoot, '.hybrid', 'hybrid-rcp.json');
+        if (fs.existsSync(rcpPath)) {
+            try {
                 const rcp = JSON.parse(fs.readFileSync(rcpPath, 'utf-8'));
-                const treeStr = JSON.stringify(jsonContext);
-                const orphans = rcp.nodes.filter((n: any) => !treeStr.includes(n.id.split('/').pop()?.replace('.rs', '') || ""));
-                if (orphans.length > 5) {
-                    reportData.orphans_count = orphans.length;
-                } else {
-                    reportData.orphans_count = 0;
+                if (rcp.nodes && jsonContext.manifest) {
+                    const treeStr = JSON.stringify(jsonContext.manifest);
+                    const orphans = rcp.nodes.filter((n: any) => !treeStr.includes(n.id.split('/').pop()?.replace('.rs', '') || ""));
+                    reportData.orphans_count = orphans.length > 5 ? orphans.length : 0;
                 }
+            } catch (e) {
+                // Ignore RCP parse errors
             }
+        }
 
-            if (aiFormat) {
-                const out = JSON.stringify(reportData);
-                console.log(out);
-                appendLog('consolidate', out);
+        if (aiFormat) {
+            console.log(JSON.stringify(reportData));
+        } else {
+            let reportOutput = `--- HYBRID TREE CONSOLIDATION REPORT ---\n`;
+            reportOutput += `✅ Consolidated manifest: ${reportData.manifest}\n`;
+            reportOutput += `✅ Exported JSON: ${reportData.state}\n`;
+            if (reportData.orphans_count > 0) {
+                reportOutput += `⚠️  Found ${reportData.orphans_count} potential undocumented code modules (Orphans).\n`;
             } else {
-                let reportOutput = `--- HYBRID TREE CONSOLIDATION REPORT ---\n`;
-                reportOutput += `✅ Consolidated manifest: ${reportData.manifest}\n`;
-                reportOutput += `✅ Exported JSON: ${reportData.state}\n`;
-                if (reportData.orphans_count > 0) {
-                    reportOutput += `⚠️  Found ${reportData.orphans_count} potential undocumented code modules (Orphans).\n`;
-                } else {
-                    reportOutput += `✅ No significant orphans detected.\n`;
-                }
-                reportOutput += `----------------------------------------\n`;
-                console.log(reportOutput);
-                appendLog('consolidate', reportOutput);
+                reportOutput += `✅ No significant orphans detected.\n`;
             }
-            break;
+            reportOutput += `----------------------------------------\n`;
+            console.log(reportOutput);
+            appendLog('consolidate', reportOutput);
+        }
+    });
 
-        default:
-            console.log('Usage: hybrid-tree [export|snapshot|consolidate]');
-    }
-}
-
-// Start the CLI application
-run();
+program.parse(process.argv);
