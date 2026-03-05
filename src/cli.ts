@@ -93,7 +93,7 @@ program
             process.exit(1);
         }
 
-        let initialManifest = fs.readFileSync(manifestPath, 'utf-8');
+        const initialManifest = fs.readFileSync(manifestPath, 'utf-8');
         let fullManifest = initialManifest;
         const consolidator = new TreeConsolidator(workspaceRoot);
         fullManifest = await consolidator.consolidate(initialManifest);
@@ -107,7 +107,7 @@ program
         const treePath = path.join(workspaceRoot, '.hybrid', 'hybrid-tree.json');
         fs.writeFileSync(treePath, JSON.stringify(jsonContext, null, 2));
 
-        let reportData: any = { status: 'success', manifest: consolidatedPath, state: treePath };
+        const reportData: any = { status: 'success', manifest: consolidatedPath, state: treePath };
 
         const rcpPath = path.join(workspaceRoot, '.hybrid', 'hybrid-rcp.json');
         if (fs.existsSync(rcpPath)) {

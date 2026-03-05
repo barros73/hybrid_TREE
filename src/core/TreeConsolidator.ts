@@ -5,7 +5,7 @@ export class TreeConsolidator {
     constructor(private workspaceRoot: string) { }
 
     private async findAllMdFiles(dir: string, fileList: string[] = []): Promise<string[]> {
-        const EXCLUDED_DIRS = ['.git', 'node_modules', 'target', 'dist', 'build', 'out', '.hybrid', '.gemini', 'obj', 'bin'];
+        const EXCLUDED_DIRS = ['.git', 'node_modules', 'target', 'dist', 'build', 'out', '.hybrid', '.gemini', 'obj', 'bin', '.vscode-test', 'test'];
         const files = fs.readdirSync(dir);
 
         for (const file of files) {
