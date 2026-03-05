@@ -29,7 +29,7 @@ const contextManager = new ContextManager(workspaceRoot);
 program
     .name('hybrid-tree')
     .description('Layer 1 of the Hybrid Ecosystem: Project Cartographer')
-    .version('0.6.1');
+    .version('0.6.2');
 
 function appendLog(cmd: string, message: string): void {
     const hybridDir = path.join(workspaceRoot, '.hybrid');
