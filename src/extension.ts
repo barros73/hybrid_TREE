@@ -38,31 +38,31 @@ export function activate(context: vscode.ExtensionContext) {
     const contextManager = new ContextManager(workspaceRoot);
     const reasoningLoop = new ReasoningLoop(workspaceRoot);
 
-    let disposableInit = vscode.commands.registerCommand('hybridTree.init', () => {
+    const disposableInit = vscode.commands.registerCommand('hybridTree.init', () => {
         vscode.window.showInformationMessage('Hybrid Tree: Initializing...');
         treeProvider.refresh();
     });
 
-    let disposableToggle = vscode.commands.registerCommand('hybridTree.toggleState', () => {
+    const disposableToggle = vscode.commands.registerCommand('hybridTree.toggleState', () => {
         vscode.window.showInformationMessage('Hybrid Tree: Toggling State...');
     });
 
-    let disposableRefresh = vscode.commands.registerCommand('hybridTree.refreshEntry', () => {
+    const disposableRefresh = vscode.commands.registerCommand('hybridTree.refreshEntry', () => {
         treeProvider.refresh();
     });
 
-    let disposableCopyContext = vscode.commands.registerCommand('hybridTree.copyContext', async () => {
+    const disposableCopyContext = vscode.commands.registerCommand('hybridTree.copyContext', async () => {
         const snapshot = await contextManager.getContextSnapshot();
         await vscode.env.clipboard.writeText(snapshot);
         vscode.window.showInformationMessage('Hybrid Tree: AI Context copied to clipboard!');
     });
 
-    let disposableSuggest = vscode.commands.registerCommand('hybridTree.suggestNextStep', async () => {
+    const disposableSuggest = vscode.commands.registerCommand('hybridTree.suggestNextStep', async () => {
         const suggestion = await reasoningLoop.suggestNextStep();
         vscode.window.showInformationMessage(`Hybrid Tree Suggestion: ${suggestion}`);
     });
 
-    let disposableExport = vscode.commands.registerCommand('hybridTree.exportJson', async () => {
+    const disposableExport = vscode.commands.registerCommand('hybridTree.exportJson', async () => {
         if (!workspaceRoot) return;
         const hybridDir = path.join(workspaceRoot, '.hybrid');
         if (!fs.existsSync(hybridDir)) fs.mkdirSync(hybridDir);
@@ -96,4 +96,6 @@ export function activate(context: vscode.ExtensionContext) {
 /**
  * Deactivates the extension.
  */
-export function deactivate() { }
+export function deactivate() {
+    // Optional teardown code
+}

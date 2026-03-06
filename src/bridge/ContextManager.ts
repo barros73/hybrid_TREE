@@ -20,7 +20,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 
 // Directories to exclude from scanning — language-agnostic
-const EXCLUDED_DIRS = ['.git', 'node_modules', 'target', 'dist', 'build', 'out', '.hybrid', '.gemini', 'obj', 'bin', 'debug', 'release'];
+const EXCLUDED_DIRS = ['.git', 'node_modules', 'target', 'dist', 'build', 'out', '.hybrid', '.gemini', 'obj', 'bin', 'debug', 'release', '.vscode-test', 'test'];
 
 export class ContextManager {
     constructor(private workspaceRoot: string | undefined) { }

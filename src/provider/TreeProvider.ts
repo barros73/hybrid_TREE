@@ -50,7 +50,7 @@ export class TreeProvider implements vscode.TreeDataProvider<TreeItem> {
             if (match) {
                 const prefix = match[1];
                 const status = match[2];
-                let fullText = match[3];
+                const fullText = match[3];
                 const indent = prefix.length;
 
                 // Handle Label: Description format
